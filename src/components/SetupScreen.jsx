@@ -12,7 +12,7 @@ export const SetupScreen = ({ onStart }) => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-900 text-white p-8">
-            <div className="w-full bg-neutral-800 p-8 rounded-2xl shadow-2xl border border-neutral-700" style={{ maxWidth: '600px' }}>
+            <div className="w-full bg-neutral-800 p-8 rounded-2xl shadow-2xl border border-neutral-700" style={{ width: '90%', maxWidth: '600px' }}>
                 <div className="flex items-center justify-center mb-8 text-yellow-500">
                     <Settings size={48} />
                 </div>

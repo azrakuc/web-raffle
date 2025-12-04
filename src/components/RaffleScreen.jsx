@@ -85,24 +85,23 @@ export const RaffleScreen = ({
     }, [isRolling, isFinished, availableNumbers]);
 
     return (
-        <div className="flex h-screen bg-black text-white overflow-hidden">
-            {/* Left Banner Area (300px) */}
-            <div className="w-[300px] bg-neutral-900 border-r border-neutral-800 flex flex-col items-center justify-center p-4 flex-shrink-0">
+        <div className="flex flex-col landscape:flex-row h-screen bg-black text-white overflow-hidden">
+            {/* Left Banner Area (Hidden on Portrait, Visible on Landscape) */}
+            <div className="hidden landscape:flex w-[150px] lg:w-[300px] bg-neutral-900 border-r border-neutral-800 flex-col items-center justify-center p-4 flex-shrink-0 transition-all duration-300">
                 <div className="w-full h-full border-2 border-dashed border-neutral-700 rounded-xl flex items-center justify-center text-neutral-500">
-                    <span className="text-center">BANNER AREA<br />(300px)</span>
+                    <span className="text-center text-sm lg:text-base">BANNER<br />AREA</span>
                 </div>
             </div>
 
-            {/* Main Display Area (Remaining width) */}
-            <div className="flex-1 flex flex-col relative min-w-0">
-                <div className="absolute top-8 left-8 text-neutral-500 font-mono z-10">
+            {/* Main Display Area */}
+            <div className="flex-1 flex flex-col relative min-w-0 h-full">
+                <div className="absolute top-4 left-4 lg:top-8 lg:left-8 text-neutral-500 font-mono z-10 text-sm lg:text-base">
                     REMAINING: {availableNumbers.length}
                 </div>
 
                 {/* Center Container */}
-                <div className="flex-1 flex justify-center items-center pt-20">
-                    {/* Fixed Size Number Container to prevent layout shift */}
-                    <div className="w-[1000px] h-[500px] relative flex justify-center items-center">
+                <div className="flex-1 flex justify-center items-center">
+                    <div className="relative flex justify-center items-center w-full h-full">
                         <AnimatePresence mode="popLayout">
                             <motion.div
                                 key={isRolling ? 'rolling' : displayNumber}
@@ -112,18 +111,20 @@ export const RaffleScreen = ({
                                 className={`absolute inset-0 flex justify-center items-center font-bold tabular-nums tracking-tighter ${showWinner ? 'text-yellow-500 scale-125' : 'text-white'
                                     }`}
                                 style={{
-                                    fontSize: '400px',
                                     lineHeight: 1,
                                     textShadow: '0 0 50px rgba(0,0,0,0.5)'
                                 }}
                             >
-                                {displayNumber}
+                                {/* Dynamic Font Size: Fit within width and height */}
+                                <span style={{ fontSize: 'min(35vw, 55vh)' }}>
+                                    {displayNumber}
+                                </span>
                             </motion.div>
                         </AnimatePresence>
                     </div>
                 </div>
 
-                <div className="h-64 flex justify-center items-start pb-24 z-10">
+                <div className="h-[20vh] flex justify-center items-start z-10">
                     {!isFinished ? (
                         <button
                             onClick={handleAction}
@@ -133,25 +134,25 @@ export const RaffleScreen = ({
                                 : 'bg-yellow-500 hover:bg-yellow-400 text-black'
                                 }`}
                             style={{
-                                padding: '1.5rem 4rem',
-                                fontSize: '2.5rem'
+                                padding: 'clamp(0.8rem, 2vh, 1.5rem) clamp(2rem, 4vw, 4rem)',
+                                fontSize: 'clamp(1.2rem, 3vh, 2.5rem)'
                             }}
                         >
                             {isRolling ? 'ROLLING...' : 'DRAW'}
                         </button>
                     ) : (
-                        <div className="text-4xl text-neutral-400 font-bold">
+                        <div className="text-2xl lg:text-4xl text-neutral-400 font-bold">
                             ALL NUMBERS DRAWN
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Sidebar History (300px) */}
-            <div className="w-[300px] bg-neutral-900 border-l border-neutral-800 p-6 flex flex-col flex-shrink-0">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-neutral-400 flex items-center gap-2">
-                        <Trophy size={24} />
+            {/* Sidebar History (Bottom on Portrait, Right on Landscape) */}
+            <div className="w-full landscape:w-[300px] h-[250px] landscape:h-auto bg-neutral-900 border-t landscape:border-t-0 landscape:border-l border-neutral-800 p-4 flex flex-col flex-shrink-0 transition-all duration-300">
+                <div className="flex items-center justify-between mb-2 landscape:mb-6">
+                    <h2 className="text-base landscape:text-xl font-bold text-neutral-400 flex items-center gap-2">
+                        <Trophy className="w-5 h-5 landscape:w-7 landscape:h-7" />
                         WINNERS
                     </h2>
                     <button
@@ -159,24 +160,26 @@ export const RaffleScreen = ({
                         className="p-2 hover:bg-neutral-800 rounded-full text-neutral-500 hover:text-white transition-colors"
                         title="Reset Raffle"
                     >
-                        <RotateCcw size={24} />
+                        <RotateCcw className="w-5 h-5 landscape:w-7 landscape:h-7" />
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                    {drawnNumbers.map((num, index) => (
-                        <motion.div
-                            key={`${num}-${index}`}
-                            initial={{ x: 20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            className="bg-neutral-800 p-4 rounded-xl border border-neutral-700 flex flex-col items-center justify-center gap-2"
-                        >
-                            <span className="text-neutral-500 font-mono text-lg self-start">#{drawnNumbers.length - index}</span>
-                            <span className="font-bold text-yellow-500" style={{ fontSize: '5rem', lineHeight: 1 }}>{num}</span>
-                        </motion.div>
-                    ))}
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="grid grid-cols-3 gap-2 landscape:flex landscape:flex-col landscape:space-y-4">
+                        {drawnNumbers.map((num, index) => (
+                            <motion.div
+                                key={`${num}-${index}`}
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="bg-neutral-800 p-2 landscape:p-4 rounded-xl border border-neutral-700 flex flex-col items-center justify-center gap-1 landscape:gap-2"
+                            >
+                                <span className="text-neutral-500 font-mono text-xs landscape:text-lg self-start">#{drawnNumbers.length - index}</span>
+                                <span className="font-bold text-yellow-500 text-4xl landscape:text-[5rem] leading-none">{num}</span>
+                            </motion.div>
+                        ))}
+                    </div>
                     {drawnNumbers.length === 0 && (
-                        <div className="text-neutral-600 text-center py-8 italic">
+                        <div className="text-neutral-600 text-center py-4 landscape:py-8 italic text-xs landscape:text-base">
                             No winners yet
                         </div>
                     )}
